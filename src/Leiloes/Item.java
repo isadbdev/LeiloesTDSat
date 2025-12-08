@@ -1,10 +1,12 @@
 package Leiloes;
 
 public class Item {
+
     private int id;
     private String nome;
     private String descricao;
     private double preco;
+    private String status;
 
     public Item() {}
 
@@ -12,10 +14,10 @@ public class Item {
         this.nome = nome;
         this.descricao = descricao;
         this.preco = preco;
+        this.status = "Disponível";
     }
 
     public int getId() { return id; }
-
     public void setId(int id) { this.id = id; }
 
     public String getNome() { return nome; }
@@ -26,4 +28,7 @@ public class Item {
 
     public double getPreco() { return preco; }
     public void setPreco(double preco) { this.preco = preco; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 }

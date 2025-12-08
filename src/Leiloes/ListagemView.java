@@ -9,6 +9,10 @@ public class ListagemView extends JFrame {
 
     private JTable tabela;
     private DefaultTableModel model;
+    private JButton btnVender;
+    private JButton btnAtualizar;
+    private JButton btnConsultarVendas;
+    private ItemDAO dao = new ItemDAO();
 
     public ListagemView() {
         initUI();
@@ -21,26 +25,45 @@ public class ListagemView extends JFrame {
         setSize(700, 420);
         setLocationRelativeTo(null);
 
-        model = new DefaultTableModel(new Object[]{"ID", "Nome", "Descrição", "Preço"}, 0) {
+        model = new DefaultTableModel(new Object[]{"ID", "Nome", "Descrição", "Preço", "Status"}, 0) {
             @Override
-            public boolean isCellEditable(int row, int column) { return false; }
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
         };
         tabela = new JTable(model);
         JScrollPane sp = new JScrollPane(tabela);
 
-        JButton btnAtualizar = new JButton("Atualizar");
+        btnAtualizar = new JButton("Atualizar");
+        btnVender = new JButton("Vender");
+        btnConsultarVendas = new JButton("Consultar Vendas");
+
         btnAtualizar.addActionListener(e -> carregarTabela());
+
+        btnVender.addActionListener(e -> {
+            int linha = tabela.getSelectedRow();
+            if (linha >= 0) {
+                int id = (int) tabela.getValueAt(linha, 0);
+                dao.venderProduto(id);
+                carregarTabela();
+            } else {
+                JOptionPane.showMessageDialog(this, "Selecione um item para vender");
+            }
+        });
+
+        btnConsultarVendas.addActionListener(e -> new VendasView().setVisible(true));
 
         JPanel topo = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         topo.add(btnAtualizar);
+        topo.add(btnVender);
+        topo.add(btnConsultarVendas);
 
         add(topo, BorderLayout.NORTH);
         add(sp, BorderLayout.CENTER);
     }
 
     private void carregarTabela() {
-        ItemDAO dao = new ItemDAO();
-        List<Item> lista = dao.listar();
+        List<Item> lista = dao.listarTodosItens();
 
         model.setRowCount(0);
         for (Item it : lista) {
@@ -48,7 +71,8 @@ public class ListagemView extends JFrame {
                     it.getId(),
                     it.getNome(),
                     it.getDescricao(),
-                    it.getPreco()
+                    it.getPreco(),
+                    it.getStatus()
             });
         }
     }
